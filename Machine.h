@@ -8,10 +8,11 @@ using namespace std;
 
 class Register {
 private:
-    int arr[16] = {0};
+    int arr[16];
 public:
-    int get_register();
+    int get_register(int indexR);
     void write_register(int indexR, int value);
+    void initializeArr();
 };
 
 
@@ -23,10 +24,11 @@ public:
 
 class Memory {
 private:
-    int memory[256] = {0};
+    int memory[256];
 public:
     int get_memory(int index);
-    void write_memory();
+    void write_memory(int regValue , int memoryIndex);
+    void initializeMemory();
 };
 
 
@@ -38,17 +40,17 @@ protected:
 public:
     void execute(string inst);
     void fetchInstructions(string filename);
+    void startMachine();
 };
 
 
 
 
 class Instructions : public Machine {
-private:
-    Register regIn = reg;
-    Memory memIn = mem;
 public:
-    void caseOne(int reg, int mem);
+    void caseOne(int regs, int memo);
+    void caseTwo(int regs, int value);
+    void caseThree(int regs , int memo);
 };
 
 
