@@ -64,6 +64,10 @@ void Instructions::caseThree(int regs, int memo) {
     this->mem.write_memory(regsValue , memo);
 }
 
+Instructions::Instructions() {
+    this->startMachine();
+}
+
 //            012345678901
 //           "0x1 0x0 0xF3"
 

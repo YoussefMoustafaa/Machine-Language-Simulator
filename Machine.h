@@ -48,6 +48,7 @@ public:
 
 class Instructions : public Machine {
 public:
+    Instructions();
     void caseOne(int regs, int memo);
     void caseTwo(int regs, int value);
     void caseThree(int regs , int memo);
