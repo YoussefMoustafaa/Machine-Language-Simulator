@@ -10,20 +10,20 @@
 // 35B1
 // 40A4
 void Register::write_register(int indexR, int value) {
-    arr[indexR] = value;
-    cout << arr[indexR] << " found in register " << hex << indexR << endl;
+    registers[indexR] = value;
+    cout << registers[indexR] << " found in register " << hex << indexR << endl;
 }
 
 
 
 int Register::get_register(int indexR) {
-    int regsValue = arr[indexR] ;
+    int regsValue = registers[indexR] ;
     return regsValue;
 }
 
 void Register::initializeArr() {
     for (int i = 0; i < 16; ++i) {
-        arr[i] = 0;
+        registers[i] = 0;
     }
 }
 
@@ -64,13 +64,18 @@ void Instructions::caseThree(int regs, int memo) {
     this->mem.write_memory(regsValue , memo);
 }
 
+
+
 Instructions::Instructions() {
     this->reg.initializeArr();
     this->mem.initializeMemory();
 }
+
+
 // A3
 void Instructions::caseFour(string operand_value) {
     string value1_string, value2_string;
+
     value1_string += operand_value[2];
     value2_string += operand_value[3];
 
@@ -80,6 +85,20 @@ void Instructions::caseFour(string operand_value) {
     int register_value = this->reg.get_register(value1);
 
     this->reg.write_register(value2, register_value);
+}
+
+void Instructions::caseFive(int regs, string two_values) {
+    string value1_string, value2_string;
+
+    value1_string += two_values[2];
+    value2_string += two_values[3];
+
+    int value1 = stoi(value1_string, nullptr, 16);
+    int value2 = stoi(value2_string, nullptr, 16);
+
+    int result = value1 & value2;
+
+    this->reg.write_register(regs, result);
 }
 
 //            012345678901
@@ -117,8 +136,7 @@ void Machine::execute(string inst) {
             i.caseFour(operand_mem);
             break;
         case 5:
-            break;
-        case 6:
+            i.caseFive(regs, operand_mem);
             break;
         case 11: // B
             break;
@@ -143,5 +161,9 @@ void Machine::fetchInstructions(string filename) {
         execute(line);
     }
 
+}
+
+Machine::Machine() {
+    pc = 0x0;
 }
 

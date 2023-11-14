@@ -8,7 +8,7 @@ using namespace std;
 
 class Register {
 private:
-    int arr[16];
+    int registers[16];
 public:
     int get_register(int indexR);
     void write_register(int indexR, int value);
@@ -32,12 +32,23 @@ public:
 };
 
 
+class InstructionsMemory {
+private:
+    string inst[256];
+public:
+    string get_instruction();
+};
+
+
 
 class Machine {
 protected:
     Register reg;
     Memory mem;
+    InstructionsMemory instructions;
+    static int pc;
 public:
+    Machine();
     void execute(string inst);
     void fetchInstructions(string filename);
 };
@@ -52,6 +63,7 @@ public:
     void caseTwo(int regs, int value);
     void caseThree(int regs , int memo);
     void caseFour(string operand_value);
+    void caseFive(int regs, string two_values);
 };
 
 
