@@ -14,6 +14,6 @@ int main() {
     cin >> file;
     cout << file << endl;
     Machine M;
-    M.fetchInstructions(file);
+    M.fetchInstructionsFile(file);
     return 0;
 }

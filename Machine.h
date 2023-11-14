@@ -34,9 +34,11 @@ public:
 
 class InstructionsMemory {
 private:
-    string inst[256];
+    vector<string> instList;
 public:
-    string get_instruction();
+    void addInstruction(string& inst);
+    int getInstListSize();
+    string getInstruction(int index);
 };
 
 
@@ -47,10 +49,11 @@ protected:
     Memory mem;
     InstructionsMemory instructions;
     static int pc;
+    bool isRunning = false;
 public:
-    Machine();
     void execute(string inst);
-    void fetchInstructions(string filename);
+    void fetchInstructionsFile(string filename);
+    void runInstructions();
 };
 
 
@@ -63,7 +66,9 @@ public:
     void caseTwo(int regs, int value);
     void caseThree(int regs , int memo);
     void caseFour(string operand_value);
-    void caseFive(int regs, string two_values);
+    void caseFive(int regs, string two_registers);
+    void caseB(int regs, string& instCell);
+    void caseC();
 };
 
 

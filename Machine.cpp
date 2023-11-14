@@ -11,7 +11,7 @@
 // 40A4
 void Register::write_register(int indexR, int value) {
     registers[indexR] = value;
-    cout << registers[indexR] << " found in register " << hex << indexR << endl;
+    cout << registers[indexR] << " found in R" << hex << indexR << endl;
 }
 
 
@@ -58,12 +58,14 @@ void Instructions::caseTwo(int regs, int value) {
 }
 
 
-
+// 3 0 B5
 void Instructions::caseThree(int regs, int memo) {
     int regsValue = this->reg.get_register(regs);
     this->mem.write_memory(regsValue , memo);
 }
 
+
+int Machine::pc = 0x0;
 
 
 Instructions::Instructions() {
@@ -71,13 +73,13 @@ Instructions::Instructions() {
     this->mem.initializeMemory();
 }
 
-
-// A3
+// R4 = RA
+// 4 0 A4
 void Instructions::caseFour(string operand_value) {
     string value1_string, value2_string;
 
-    value1_string += operand_value[2];
-    value2_string += operand_value[3];
+    value1_string += operand_value[2]; // A
+    value2_string += operand_value[3]; // 4
 
     int value1 = stoi(value1_string, nullptr, 16);
     int value2 = stoi(value2_string, nullptr, 16);
@@ -87,18 +89,43 @@ void Instructions::caseFour(string operand_value) {
     this->reg.write_register(value2, register_value);
 }
 
-void Instructions::caseFive(int regs, string two_values) {
-    string value1_string, value2_string;
+// 012345678901
+// 0x5 0x7 0x26
+void Instructions::caseFive(int regs, string two_registers) {
+    string register1_string, register2_string;
 
-    value1_string += two_values[2];
-    value2_string += two_values[3];
+    register1_string += two_registers[2];
+    register2_string += two_registers[3];
 
-    int value1 = stoi(value1_string, nullptr, 16);
-    int value2 = stoi(value2_string, nullptr, 16);
+    int register1 = stoi(register1_string, nullptr, 16);
+    int register2 = stoi(register2_string, nullptr, 16);
 
-    int result = value1 & value2;
+    int register_value1 = this->reg.get_register(register1);
+    int register_value2 = this->reg.get_register(register2);
+
+    int result = register_value1 + register_value2;
 
     this->reg.write_register(regs, result);
+}
+
+// B 4 3C
+void Instructions::caseB(int regs, string& instCell) {
+
+    int register0_value = this->reg.get_register(0);
+    int registerN_value = this->reg.get_register(regs);
+
+    if (register0_value == registerN_value) { // if true, then we want to jump to instList of index instCell
+
+        int new_cell = stoi(instCell, nullptr, 16);
+
+        pc = new_cell;
+
+    }
+    // else do nothing
+}
+
+void Instructions::caseC() {
+    isRunning = true;
 }
 
 //            012345678901
@@ -108,7 +135,8 @@ void Instructions::caseFive(int regs, string two_values) {
 
 
 void Machine::execute(string inst) {
-
+    // 012345678901
+    // 0x1 0x4 0xA3
     string code = inst.substr(0, 3);
     int opCode = stoi(code, nullptr, 16);
 
@@ -139,17 +167,17 @@ void Machine::execute(string inst) {
             i.caseFive(regs, operand_mem);
             break;
         case 11: // B
+            i.caseB(regs, operand_mem);
             break;
         case 12: // C
-            break;
-        default:
+            i.caseC();
             break;
     }
 
 }
 
 
-void Machine::fetchInstructions(string filename) {
+void Machine::fetchInstructionsFile(string filename) {
 
     fstream instFile("./" + filename);
 
@@ -158,12 +186,40 @@ void Machine::fetchInstructions(string filename) {
     while (getline(instFile, line))
     {
         cout << line << endl;
-        execute(line);
+        instructions.addInstruction(line);
     }
 
+    runInstructions();
+
 }
 
-Machine::Machine() {
-    pc = 0x0;
+//Machine::Machine() {
+//    pc = 0x0;
+//}
+
+void Machine::runInstructions() {
+    int n = instructions.getInstListSize();
+    while (pc < n) {
+
+        string instruct = instructions.getInstruction(pc);
+
+        pc++;
+
+        execute(instruct);
+
+        if (isRunning)
+            break;
+    }
 }
 
+void InstructionsMemory::addInstruction(string& inst) {
+    instList.push_back(inst);
+}
+
+int InstructionsMemory::getInstListSize() {
+    return instList.size();
+}
+
+string InstructionsMemory::getInstruction(int index) {
+    return instList[index];
+}
