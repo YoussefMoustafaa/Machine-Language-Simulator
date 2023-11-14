@@ -40,7 +40,6 @@ protected:
 public:
     void execute(string inst);
     void fetchInstructions(string filename);
-    void startMachine();
 };
 
 
@@ -52,6 +51,7 @@ public:
     void caseOne(int regs, int memo);
     void caseTwo(int regs, int value);
     void caseThree(int regs , int memo);
+    void caseFour(string operand_value);
 };
 
 

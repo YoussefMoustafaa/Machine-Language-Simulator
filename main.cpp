@@ -15,6 +15,5 @@ int main() {
     cout << file << endl;
     Machine M;
     M.fetchInstructions(file);
-
     return 0;
 }

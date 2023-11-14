@@ -65,7 +65,21 @@ void Instructions::caseThree(int regs, int memo) {
 }
 
 Instructions::Instructions() {
-    this->startMachine();
+    this->reg.initializeArr();
+    this->mem.initializeMemory();
+}
+// A3
+void Instructions::caseFour(string operand_value) {
+    string value1_string, value2_string;
+    value1_string += operand_value[2];
+    value2_string += operand_value[3];
+
+    int value1 = stoi(value1_string, nullptr, 16);
+    int value2 = stoi(value2_string, nullptr, 16);
+
+    int register_value = this->reg.get_register(value1);
+
+    this->reg.write_register(value2, register_value);
 }
 
 //            012345678901
@@ -85,7 +99,7 @@ void Machine::execute(string inst) {
     string operand_mem = inst.substr(8, 4);
     int memo = stoi(operand_mem, nullptr, 16);
 
-    Instructions i;
+    static Instructions i;
 
     // 2 0 A3
 
@@ -100,6 +114,7 @@ void Machine::execute(string inst) {
             i.caseThree(regs , memo);
             break;
         case 4:
+            i.caseFour(operand_mem);
             break;
         case 5:
             break;
@@ -121,6 +136,7 @@ void Machine::fetchInstructions(string filename) {
     fstream instFile("./" + filename);
 
     string line;
+
     while (getline(instFile, line))
     {
         cout << line << endl;
@@ -129,7 +145,3 @@ void Machine::fetchInstructions(string filename) {
 
 }
 
-void Machine::startMachine() {
-    this->reg.initializeArr();
-    this->mem.initializeMemory();
-}
