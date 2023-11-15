@@ -8,12 +8,12 @@ using namespace std;
 
 class Register {
 private:
-    int registers[16];
+    static int registers[16];
 public:
-    int get_register(int indexR);
-    void write_register(int indexR, int value);
-    void initializeRegisters();
-    void DisplayRegisters();
+    static int get_register(int indexR);
+    static void write_register(int indexR, int value);
+//    void initializeRegisters();
+    static void DisplayRegisters();
 };
 
 
@@ -25,14 +25,20 @@ public:
 
 class Memory {
 private:
-    int memory[256];
+    static int memory[256];
 public:
-    int get_memory(int index);
-    void write_memory(int regValue , int memoryIndex);
-    void initializeMemory();
-    void DisplayMemory();
+    static int get_memory(int index);
+    static void write_memory(int regValue , int memoryIndex);
+//    void initializeMemory();
+    static void DisplayMemory();
 };
 
+// i
+// 2 0 01  0
+// 2 2 01  1
+// 5 1 12  2
+// B 1 02  3
+// C 0 00  4
 
 class InstructionsMemory {
 private:
@@ -65,7 +71,7 @@ public:
 
 class Instructions : public Machine {
 public:
-    Instructions();
+//    Instructions();
     void caseOne(int regs, int memo);
     void caseTwo(int regs, int value);
     void caseThree(int regs , int memo);

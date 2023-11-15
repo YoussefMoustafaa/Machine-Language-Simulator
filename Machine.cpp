@@ -22,11 +22,12 @@ int Register::get_register(int indexR) {
 }
 
 
-void Register::initializeRegisters() {
-    for (int i = 0; i < 16; ++i) {
-        registers[i] = 0;
-    }
-}
+//void Register::initializeRegisters() {
+//    for (int i = 0; i < 16; ++i) {
+//        registers[i] = 0;
+//    }
+//}
+
 
 void Register::DisplayRegisters() {
     int sz = sizeof(registers) / sizeof(registers[0]);
@@ -49,11 +50,11 @@ void Memory::write_memory(int regValue, int memoryIndex) {
 }
 
 
-void Memory::initializeMemory() {
-    for (int i = 0; i < 256; ++i) {
-        memory[i] = 0;
-    }
-}
+//void Memory::initializeMemory() {
+//    for (int i = 0; i < 256; ++i) {
+//        memory[i] = 0;
+//    }
+//}
 
 void Memory::DisplayMemory() {
     int siz = sizeof(memory) / sizeof(memory[0]);
@@ -90,11 +91,15 @@ void Instructions::caseThree(int regs, int memo) {
 
 int Machine::pc = 0x0;
 
+int Register::registers[16] = {0};
 
-Instructions::Instructions() {
-    this->reg.initializeRegisters();
-    this->mem.initializeMemory();
-}
+int Memory::memory[256] = {0};
+
+
+//Instructions::Instructions() {
+//    this->reg.initializeRegisters();
+//    this->mem.initializeMemory();
+//}
 
 // R4 = RA
 // 4 0 A4
@@ -169,7 +174,7 @@ void Machine::execute(string inst) {
     string operand_mem = inst.substr(8, 4);
     int memo = stoi(operand_mem, nullptr, 16);
 
-    static Instructions i;
+    Instructions i;
 
     // 2 0 A3
 
@@ -229,9 +234,9 @@ void Machine::runInstructions() {
 
         string instruct = instructions.getInstruction(pc);
 
-        pc++;
-
         displayMiniMenu();
+
+        pc++;
 
         execute(instruct);
 
@@ -266,7 +271,7 @@ void Machine::displayMiniMenu() {
         if (c == 1) {
             cout << "IR: " << instructions.getInstruction(pc) << endl;
         } else if (c == 2) {
-            cout << "PC: " << pc-1 << endl;
+            cout << "PC: " << pc << endl;
         } else if (c == 3) {
             reg.DisplayRegisters();
         } else if (c == 4) {
