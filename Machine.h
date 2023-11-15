@@ -57,10 +57,12 @@ protected:
     Memory mem;
     InstructionsMemory instructions;
     static int pc;
-    bool isRunning = false;
+    bool halt = false;
 public:
+    bool isValid(char code);
+    bool checkValidInstruction(string& inst);
     void startMachine();
-    void execute(string inst);
+    void execute(string& inst);
     void fetchInstructionsFile(string& filename);
     void runInstructions();
     void displayMiniMenu();

@@ -157,27 +157,36 @@ void Instructions::caseB(int regs, string& instCell) {
 
 
 void Instructions::caseC() {
-    isRunning = true;
+    halt = true;
 }
 
 
 
-void Machine::execute(string inst) {
+void Machine::execute(string& inst) {
     // 012345678901
     // 0x1 0x4 0xA3
+
+    // checkValid(inst)
+
+    if (!checkValidInstruction(inst)) {
+        cout << "Invalid Instruction!\n";
+        return;
+    }
+
     string code = inst.substr(0, 3);
-    int opCode = stoi(code, nullptr, 16);
-
     string operand_reg = inst.substr(4, 3);
-    int regs = stoi(operand_reg, nullptr, 16);
-
     string operand_mem = inst.substr(8, 4);
+
+
+    int opCode = stoi(code, nullptr, 16);
+    int regs = stoi(operand_reg, nullptr, 16);
     int memo = stoi(operand_mem, nullptr, 16);
+
 
     Instructions i;
 
     // 2 0 A3
-
+    // if (49 < > 57 || > 65 <70
     switch (opCode) {
         case 1:
             i.caseOne(regs, memo);
@@ -199,6 +208,9 @@ void Machine::execute(string inst) {
             break;
         case 12: // C
             i.caseC();
+            break;
+        default:
+            cout << "Invalid Instruction!\n";
             break;
     }
 
@@ -240,9 +252,13 @@ void Machine::runInstructions() {
 
         execute(instruct);
 
-        if (isRunning)
+        if (halt)
             break;
     }
+
+    cout << "\t\t\t\tProgram has ended.\n";
+    pc--;
+    displayMiniMenu();
 }
 
 
@@ -280,6 +296,31 @@ void Machine::displayMiniMenu() {
             break;
     }
 
+}
+// 012345678901
+// 0xS 0xG 0x0G
+bool Machine::checkValidInstruction(string& inst) {
+
+    char opCode = inst[2];
+
+    char registerCode = inst[6];
+
+    char operand1 = inst[10];
+
+    char operand2 = inst[11];
+
+    if (isValid(opCode) && isValid(registerCode) && isValid(operand1) && isValid(operand2))
+        return true;
+
+    return false;
+
+}
+
+bool Machine::isValid(char code) {
+    if ( (code >= 48 && code <= 57) || (code >= 65 && code <= 70) )
+        return true;
+
+    return false;
 }
 
 
