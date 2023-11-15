@@ -9,11 +9,11 @@
 // 20A3
 // 35B1
 // 40A4
+
 void Register::write_register(int indexR, int value) {
     registers[indexR] = value;
-    cout << registers[indexR] << " found in R" << hex << indexR << endl;
+    cout << "R" << hex << indexR << " = " << registers[indexR] << endl;
 }
-
 
 
 int Register::get_register(int indexR) {
@@ -21,9 +21,19 @@ int Register::get_register(int indexR) {
     return regsValue;
 }
 
-void Register::initializeArr() {
+
+void Register::initializeRegisters() {
     for (int i = 0; i < 16; ++i) {
         registers[i] = 0;
+    }
+}
+
+void Register::DisplayRegisters() {
+    int sz = sizeof(registers) / sizeof(registers[0]);
+
+    cout << "Registers: \n";
+    for (int i = 0; i < sz; ++i) {
+        cout << "R" << hex << i << " | " << registers[i] << endl;
     }
 }
 
@@ -33,16 +43,28 @@ int Memory::get_memory(int index) {
 }
 
 
-
 void Memory::write_memory(int regValue, int memoryIndex) {
     memory[memoryIndex] = regValue;
-    cout << memory[memoryIndex] << " found in memory " << hex << memoryIndex << endl;
+    cout << "Mem" << hex << memoryIndex << " = " << memory[memoryIndex] << endl;
 }
+
 
 void Memory::initializeMemory() {
     for (int i = 0; i < 256; ++i) {
         memory[i] = 0;
     }
+}
+
+void Memory::DisplayMemory() {
+    int siz = sizeof(memory) / sizeof(memory[0]);
+
+    cout << "Memory: \n";
+    for (int i = 0; i < siz; ++i) {
+        cout << "Mem" << hex << i << " : " << memory[i] << " | ";
+        if (i+1 % 5 == 0)
+            cout << endl;
+    }
+    cout << endl;
 }
 
 
@@ -51,6 +73,7 @@ void Instructions::caseOne(int regs, int memo) {
     int memory_value = this->mem.get_memory(memo);
     this->reg.write_register(regs, memory_value);
 }
+
 
 // 2 0 A3
 void Instructions::caseTwo(int regs, int value) {
@@ -69,12 +92,13 @@ int Machine::pc = 0x0;
 
 
 Instructions::Instructions() {
-    this->reg.initializeArr();
+    this->reg.initializeRegisters();
     this->mem.initializeMemory();
 }
 
 // R4 = RA
 // 4 0 A4
+
 void Instructions::caseFour(string operand_value) {
     string value1_string, value2_string;
 
@@ -91,6 +115,7 @@ void Instructions::caseFour(string operand_value) {
 
 // 012345678901
 // 0x5 0x7 0x26
+
 void Instructions::caseFive(int regs, string two_registers) {
     string register1_string, register2_string;
 
@@ -109,6 +134,7 @@ void Instructions::caseFive(int regs, string two_registers) {
 }
 
 // B 4 3C
+
 void Instructions::caseB(int regs, string& instCell) {
 
     int register0_value = this->reg.get_register(0);
@@ -124,14 +150,11 @@ void Instructions::caseB(int regs, string& instCell) {
     // else do nothing
 }
 
+
 void Instructions::caseC() {
     isRunning = true;
 }
 
-//            012345678901
-//           "0x1 0x0 0xF3"
-
-// B
 
 
 void Machine::execute(string inst) {
@@ -177,15 +200,19 @@ void Machine::execute(string inst) {
 }
 
 
-void Machine::fetchInstructionsFile(string filename) {
+void Machine::fetchInstructionsFile(string& filename) {
 
     fstream instFile("./" + filename);
+
+    if (!instFile.is_open()) {
+        cout << "File is not found!\n";
+        return;
+    }
 
     string line;
 
     while (getline(instFile, line))
     {
-        cout << line << endl;
         instructions.addInstruction(line);
     }
 
@@ -193,17 +220,18 @@ void Machine::fetchInstructionsFile(string filename) {
 
 }
 
-//Machine::Machine() {
-//    pc = 0x0;
-//}
 
 void Machine::runInstructions() {
+
     int n = instructions.getInstListSize();
+
     while (pc < n) {
 
         string instruct = instructions.getInstruction(pc);
 
         pc++;
+
+        displayMiniMenu();
 
         execute(instruct);
 
@@ -211,6 +239,44 @@ void Machine::runInstructions() {
             break;
     }
 }
+
+
+void Machine::startMachine() {
+    cout << "\t\t\t\tMachine Language Simulator\n\n";
+    string file;
+    cout << "Write your instructions in a file and load it here.\n";
+    cout << "Enter file name:";
+    cin >> file;
+    fetchInstructionsFile(file);
+}
+
+void Machine::displayMiniMenu() {
+
+    cout << "You can choose:\n"
+            "1. Display IR\n"
+            "2. Display PC\n"
+            "3. Display Registers\n"
+            "4. Display Memory\n"
+            "5. Any number to Continue\n";
+
+    int c;
+
+    while (cin >> c)
+    {
+        if (c == 1) {
+            cout << "IR: " << instructions.getInstruction(pc) << endl;
+        } else if (c == 2) {
+            cout << "PC: " << pc-1 << endl;
+        } else if (c == 3) {
+            reg.DisplayRegisters();
+        } else if (c == 4) {
+            mem.DisplayMemory();
+        } else if (c == 5)
+            break;
+    }
+
+}
+
 
 void InstructionsMemory::addInstruction(string& inst) {
     instList.push_back(inst);

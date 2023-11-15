@@ -12,7 +12,8 @@ private:
 public:
     int get_register(int indexR);
     void write_register(int indexR, int value);
-    void initializeArr();
+    void initializeRegisters();
+    void DisplayRegisters();
 };
 
 
@@ -29,6 +30,7 @@ public:
     int get_memory(int index);
     void write_memory(int regValue , int memoryIndex);
     void initializeMemory();
+    void DisplayMemory();
 };
 
 
@@ -51,9 +53,11 @@ protected:
     static int pc;
     bool isRunning = false;
 public:
+    void startMachine();
     void execute(string inst);
-    void fetchInstructionsFile(string filename);
+    void fetchInstructionsFile(string& filename);
     void runInstructions();
+    void displayMiniMenu();
 };
 
 
